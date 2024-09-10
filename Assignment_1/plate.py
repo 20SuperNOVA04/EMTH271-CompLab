@@ -116,7 +116,6 @@ def define_A_b(N, M, T_air, T_top, T_bot, h_left, h_right, k):
         
     return(A, b)
 
-
 def create_temp_matrix(A, b, N, M):
     """Creates a temperature matrix containing the temperatures for each cell"""
     #solving for the temperature of each cell
@@ -135,7 +134,6 @@ def create_temp_matrix(A, b, N, M):
             i+=1
     return temp_matrix
 
-
 def plot_heatmap(temp_matrix, N, M):
     """Plots the heatmap using the generated temperature matrix to show how heat flows through the system"""
     
@@ -152,7 +150,6 @@ def plot_heatmap(temp_matrix, N, M):
     plt.colorbar(heatmap)
     axs.set_aspect("equal")
     plt.show()
-
 
 def heat_conducted_from_side(d, k, T_row, T_side, M):
     """Calculates the heat transfer to the support plate on the top row (in contact with the hot furnace wall) from the top furnace wall"""
