@@ -21,7 +21,7 @@ d = 0.1     #depth of support plate
 
 def define_A_b(N, M, T_air, T_top, T_bot, h_left, h_right, k):
     """Creates the matrix A containing how each cell conducts heat, and the corresponding vector b with the constants of the heat transfer"""
-    
+     
     #creating a zero matrix and vector for values to be set into
     A = np.zeros((N*M,N*M), float)
     b = np.zeros((N*M,1), float)
