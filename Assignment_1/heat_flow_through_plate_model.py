@@ -11,7 +11,7 @@ N = 20      #number of cells in the y direction
 Y = 0.2     #lenght in m of the y direction
 dy =Y/N     #lenght of each cell in y
 
-k = 45      #thermal convectivity coefficient
+k = 45      #thermal conductivity coefficient
 
 T_air = 20  #temperature of the surrounding air
 T_top = 300 #temperature of the top furnace wall
