@@ -3,11 +3,11 @@ import numpy.linalg as alg
 import matplotlib.pyplot as plt
 
 
-M = 10      #number of cells in the x direction
+M = 20      #number of cells in the x direction
 X = 0.1     #lenght in m of the x direction
 dx =X/M     #lenght of each cell in x
 
-N = 20      #number of cells in the y direction
+N = 40      #number of cells in the y direction
 Y = 0.2     #lenght in m of the y direction
 dy =Y/N     #lenght of each cell in y
 
@@ -114,6 +114,7 @@ def create_temp_matrix(A, b, N, M):
     #solving for the temperature of each cell
     temp_vector = alg.solve(A, b)
     temp_vector = np.flip(temp_vector)
+    
     #putting each temperature into matrix form
     temp_matrix = np.zeros((N,M), float)
     i = 0
@@ -176,7 +177,7 @@ def run_program():
     Q_dot_of_bottom = heat_conducted_from_side(d, k, temp_matrix[0],T_bot, M)
     #returns the heat transfer from the cells in contact with air to the air
     Q_dot_of_left, Q_dot_right = heat_convected_to_air(d, h_left,h_right, temp_matrix, T_air, N, M, dy)
-    return Q_dot_of_top_plate, Q_dot_of_bottom, Q_dot_of_left, Q_dot_right
+    return Q_dot_of_top_plate, Q_dot_of_bottom, Q_dot_of_left, Q_dot_right, temp_matrix
 
 #Allow anyone to select what they want to see/load (makes the plotting not intrusive when you dont want it :D)
 to_see = " "
@@ -197,7 +198,7 @@ Leave Empty to Shutdown: """)
     to_see = to_see.lower()
 
     #runs define_A_b, create_temp_matrix, heat_conducted_from_top, heat_convected_from_bottom and heat_convected_to_air to find the Q vaules of each side of the plate
-    Q_dot_of_top_plate, Q_dot_of_bottom, Q_dot_of_left, Q_dot_right = run_program()
+    Q_dot_of_top_plate, Q_dot_of_bottom, Q_dot_of_left, Q_dot_right, temp_matrix = run_program()
     
     #allows the user to reset the h values
     if to_see == "r":
