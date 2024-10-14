@@ -52,28 +52,38 @@ import scipy
 # ax.plot(xs, ys2, color = "r");
 # plt.show()
 
-A = 800
-b = 0.003
-t0 = 3
-K = 0.7
-Ts = 50
-y = 170
-h = 0.5
+# A = 800
+# b = 0.003
+# t0 = 3
+# K = 0.7
+# Ts = 50
+# y = 170
+# h = 0.5
 
-t = t0
+# t = t0
 
-def f(y, t):
-    return(A/((t-t0)**2+b)-K*(y-Ts))
+# def f(y, t):
+#     return(A/((t-t0)**2+b)-K*(y-Ts))
 
-while t <= 10:
-    tnew = t+h
-    m = f(y,t)
-    ynew = y + (tnew-t)*m
-    print(ynew)
-    t = tnew
-    y = ynew
+# while t <= 10:
+#     tnew = t+h
+#     m = f(y,t)
+#     ynew = y + (tnew-t)*m
+#     print(ynew)
+#     t = tnew
+#     y = ynew
 
 
-fn = lambda y,t:A/((t-t0)**2+b)-K*(y-Ts)
+# fn = lambda y,t:A/((t-t0)**2+b)-K*(y-Ts)
 
-print(scipy.integrate.solve_ivp(fn, [3, 10], [170], method="RK23"))
+# print(scipy.integrate.solve_ivp(fn, [3, 10], [170], method="RK23"))
+
+T_past = np.array([[1,2,3],[4,5,6],[7,8,9]])
+print(T_past)
+
+N=3
+M=5
+
+A = np.zeros((N,M), float)
+
+print(A)
