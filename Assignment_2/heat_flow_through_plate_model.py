@@ -3,12 +3,12 @@ import numpy.linalg as alg
 import matplotlib.pyplot as plt
 
 
-M = 5      #number of cells in the x direction
+M = 20      #number of cells in the x direction
 X = 0.1     #lenght in m of the x direction
 dx =X/M     #lenght of each cell in x
 
-N = 5      #number of cells in the y direction
-Y = 0.1     #lenght in m of the y direction
+N = 40      #number of cells in the y direction
+Y = 0.2     #lenght in m of the y direction
 dy =Y/N     #lenght of each cell in y
 
 density = 7800  #denisty of the support plate
@@ -144,33 +144,37 @@ def plot_heatmap(temp_matrix, N, M, title):
     #setting up grids to define where each cell sits in the heatmap
     X_grid,Y_grid = np.meshgrid(range(0,M), range(0,N))
     X_grid = dx/2+dx*X_grid
-    Y_grid = Y-dy/2+dy*Y_grid
+    Y_grid = dy/2+dy*Y_grid
 
     #plotting the heatmap
     axs = plt.axes()
     heatmap = plt.pcolor(X_grid, Y_grid, temp_matrix, edgecolors='k', linewidths=0.25, shading = 'auto', vmin = 20, vmax = 300)
     plt.colorbar(heatmap)
-    axs.set_title(title)
+    # axs.set_title(title) 
     axs.set_xlabel("x position within the plate (mm)")
     axs.set_ylabel("y position within the plate (mm)")
     axs.set_aspect("equal")
     plt.show()
     
-def plot_T_distrabuiton(data_list, t0, tfinal, dt):
-    all_temps = get_left_temps(data_list)
-    # Q_left = []
-    # for i in range(0, len(all_temps)):
-    #     Q_left.append(data_list[i][3])
-        
+def plot_T_distrabution(data_list, t0, tfinal, dt):
+    all_temps = get_left_temp_distrabutions(data_list)
+    
+    tol = 0.005
+
+    for i in range(len(all_temps)):
+        if np.abs(all_temps[i]*1.02 - all_temps[len(all_temps)-1]) < tol:
+            print(i, all_temps[i], all_temps[len(all_temps)-1])
+            break
+
     t = np.arange(t0, tfinal+1, dt)
     plt.plot(t, all_temps)
-    # plt.set_xlabel("time (s)")
-    # plt.set_ylabel("")
+    plt.xlabel("time (s)")
+    plt.ylabel("Mean Temperature across Left nodes")
     plt.show()
     
-def get_left_temps(data_list):
+def get_left_temp_distrabutions(data_list):
     temp_matricies = []
-    all_left_temps = []
+    all_left_temp_mean = []
     for i in range(len(data_list)):
         temp_matricies.append(data_list[i][5])
     for matrix_num in range(len(temp_matricies)):
@@ -178,9 +182,9 @@ def get_left_temps(data_list):
         left_temps = []
         for row in range(len(temp_matrix)):
             left_temps.append(temp_matrix[row][0])
-        all_left_temps.append(left_temps)
-    return(all_left_temps   )
-
+        temp_mean = sum(left_temps)/len(left_temps)
+        all_left_temp_mean.append(temp_mean)
+    return all_left_temp_mean
 
 def heat_conducted_from_side(d, k, T_row, T_side, M):
     """Calculates the heat transfer to the support plate on the top row (in contact with the hot furnace wall) from the top furnace wall""" 
@@ -248,11 +252,9 @@ for t in range(t0, tfinal+1, dt):
 while to_see != "":
     #ask the user what they want to see
     to_see = input("""\nWhat would you like to see?\n
-Top Wall Heat Transfer [T]
-Bottom Wall Heat Transfer [B]
-Find Lowest value of h having heat flow into system from bottom [H]
-Side Air Heat Transfer[S]
-Plot the Heatmap with Balanced h values [P]
+Heat Transfer from all sides [T]
+Plot Heatmap [P]
+Plot Mean Distrabution [M]
 Reset h left and right values [R]
 Leave Empty to Shutdown: """)
     to_see = to_see.lower()
@@ -269,8 +271,37 @@ Leave Empty to Shutdown: """)
         temp_matrix = data_list[stepofinterest][5]
         plot_heatmap(temp_matrix, N, M, f"Temperatures at {timeofinterest}s")
 
-    elif to_see == "l":
-        plot_T_distrabuiton(data_list, t0, tfinal, dt)
+    elif to_see == "m":
+        plot_T_distrabution(data_list, t0, tfinal, dt)
+        
+    elif to_see == "t":
+        t = np.arange(t0, tfinal+1, dt)
+        top_plate_heat_transfer = []
+        left_side_heat_transfer = []
+        right_side_heat_transfer = []
+        bottom_plate_heat_transfer = []
+        heat_retained = []
+        
+        for i in range(len(data_list)):
+            top_plate_heat_transfer.append(data_list[i][1])
+            left_side_heat_transfer.append(data_list[i][3])
+            right_side_heat_transfer.append(data_list[i][4])
+            bottom_plate_heat_transfer.append(data_list[i][2])
+            heat_retained.append(data_list[i][1]+data_list[i][2]+data_list[i][3]+data_list[i][4])
+        
+        print(sum(heat_retained)*dt)
+            
+        
+        plt.plot(t,left_side_heat_transfer, label='Left Side')
+        plt.plot(t,right_side_heat_transfer, label='Right Side')
+        plt.plot(t,bottom_plate_heat_transfer, label='Bottom Plate')
+        plt.plot(t,top_plate_heat_transfer, label='Top Plate')
+        plt.plot(t,heat_retained, label='Retained Heat')
+        
+        plt.xlabel("Time (s)")
+        plt.ylabel("Heat transfer (W)")
+        plt.legend()
+        plt.show()
 
     # elif to_see == "h":
     #     #Loop through values of h to find the lowest value of h that gives a positive Q_dot_of_bottom.
